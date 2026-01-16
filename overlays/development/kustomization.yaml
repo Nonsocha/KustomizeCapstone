@@ -1,0 +1,13 @@
+resources:
+  - ../../base
+patchesStrategicMerge:
+  - replica-count.yaml
+configMapGenerator:
+  - name: app-config
+    behavior: merge
+    literals:
+      - LOG_LEVEL=debug
+secretGenerator:
+  - name: app-secret
+    literals:
+      - DB_PASSWORD=devpassword
