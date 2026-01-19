@@ -15,17 +15,7 @@ spec:
         app: my-app
     spec:
       containers:
-      - name: my-app
-        image: my-app-image:latest
-        ports:
-        - containerPort: 80
-  resources:
-  - deployment.yaml
-  - service.yaml
-
-configMapGenerator:
-  - name: app-config
-    literals:
-      - APP_NAME=web-app
-      - LOG_LEVEL=info
-     
+        - name: my-app
+          image: my-app-image:latest
+          ports:
+            - containerPort: 80
