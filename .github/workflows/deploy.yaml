@@ -5,13 +5,24 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write
+  contents: read
+  packages: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::707913648704:role/github-actions-eks
+          aws-region: us-east-1
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
@@ -22,6 +33,20 @@ jobs:
         run: |
           curl -s https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh | bash
           sudo mv kustomize /usr/local/bin/
+
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 707913648704.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: Build and Push Docker image
+        run: |
+          docker build -t my-app:latest .
+          docker tag my-app:latest 707913648704.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
+          docker push 707913648704.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region us-east-1 --name my-eks-cluster
 
       - name: Deploy to Kubernetes
         run: |
