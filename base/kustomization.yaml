@@ -1,3 +1,9 @@
- resources:
- - deployment.yaml
- - service.yaml
+resources:
+  - deployment.yaml
+  - service.yaml
+
+configMapGenerator:
+  - name: app-config
+    literals:
+      - APP_NAME=web-app
+      - LOG_LEVEL=info
