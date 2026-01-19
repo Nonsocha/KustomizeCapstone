@@ -3,15 +3,20 @@ resources:
 
 patches:
   - target:
-      kind: Deployment       # or ExternalSecret if patch is for ExternalSecret
-      name: my-app           # must match metadata.name in base
-      namespace: production  # optional but safer
+      kind: Deployment
+      name: my-app
+      namespace: default
     path: replica-count.yaml
 
   - target:
       kind: ExternalSecret
-      name: my-app-secret    # must match metadata.name in base
-      namespace: production
+      name: my-app-secret
+      namespace: default
     path: external-secret.yaml
 
 nameSuffix: -prod
+
+images:
+  - name: my-app-image
+    newName: 707913648704.dkr.ecr.us-east-1.amazonaws.com/my-app
+    newTag: latest
