@@ -24,6 +24,5 @@ jobs:
           sudo mv kustomize /usr/local/bin/
 
       - name: Deploy to Kubernetes
-        working-directory: ./KustomizeCapstone
         run: |
           kubectl apply -k overlays/production
