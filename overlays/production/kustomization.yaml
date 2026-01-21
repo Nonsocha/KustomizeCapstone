@@ -1,10 +1,11 @@
 resources:
   - ../../base
 
+# Patches for modifying resources
 patches:
   - target:
       kind: Deployment
-      name: my-app
+      name: my-app-prod     # Use the final name with suffix
       namespace: default
     path: replica-count.yaml
 
@@ -14,8 +15,10 @@ patches:
       namespace: default
     path: external-secret.yaml
 
+# Add suffix to all resources in production
 nameSuffix: -prod
 
+# Replace image for production
 images:
   - name: my-app-image
     newName: 707913648704.dkr.ecr.us-east-1.amazonaws.com/my-app
