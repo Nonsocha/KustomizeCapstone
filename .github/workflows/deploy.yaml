@@ -37,7 +37,7 @@ jobs:
       # 5. Configure kubeconfig for EKS
       - name: Configure kubeconfig for EKS
         run: |
-          aws eks update-kubeconfig --name eks-cluster --region us-east-1
+          aws eks update-kubeconfig --name my-eks-cluster --region us-east-1
 
       # 6. Login to Docker Hub
       - name: Login to Docker Hub
