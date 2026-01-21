@@ -57,7 +57,7 @@ jobs:
       # 8. Update image in Kustomize
       - name: Update image tag using Kustomize
         run: |
-          cd overlays/prod
+          cd overlays/production
           kustomize edit set image my-app=sirwills/kustomize-2137_barista_cafe:${{ github.sha }}
 
       # 9. Deploy to Kubernetes
