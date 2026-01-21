@@ -14,53 +14,52 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Set up kubectl
+      # 2. Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # 3. Set up kubectl
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
         with:
           version: latest
 
-      # 3. Set up Kustomize
+      # 4. Install Kustomize
       - name: Install Kustomize
         run: |
           curl -s https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh | bash
           sudo mv kustomize /usr/local/bin/
 
-      # 4. Set up kubeconfig
-      - name: Configure kubeconfig
+      # 5. Configure kubeconfig for EKS
+      - name: Configure kubeconfig for EKS
         run: |
-          echo "${{ secrets.KUBECONFIG }}" | base64 --decode > kubeconfig
-          export KUBECONFIG=$PWD/kubeconfig
+          aws eks update-kubeconfig --name eks-cluster --region us-east-1
 
-      # =========================
-      # STEP 10: BUILD & PUSH IMAGE
-      # =========================
-
-      # 5. Login to Docker Hub
+      # 6. Login to Docker Hub
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      # 6. Build Docker image
+      # 7. Build Docker image
       - name: Build Docker image
         run: |
           docker build -t sirwills/kustomize-2137_barista_cafe:${{ github.sha }} .
 
-      # 7. Push Docker image
+      # 8. Push Docker image
       - name: Push Docker image
         run: |
           docker push sirwills/kustomize-2137_barista_cafe:${{ github.sha }}
 
-      # =========================
-      # DEPLOY WITH KUSTOMIZE
-      # =========================
-
-      # 8. Update image in Kustomize
+      # 9. Update image tag using Kustomize
       - name: Update image tag using Kustomize
         run: |
           cd overlays/production
           kustomize edit set image my-app=sirwills/kustomize-2137_barista_cafe:${{ github.sha }}
 
-      # 9. Deploy to Kubernetes
+      # 10. Deploy to Kubernetes
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -k overlays/production
