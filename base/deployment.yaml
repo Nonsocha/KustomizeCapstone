@@ -16,6 +16,9 @@ spec:
     spec:
       containers:
         - name: my-app
-          image: 707913648704.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
+          image: sirwills/kustomize-2137_barista_cafe:1.0.0
           ports:
             - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: app-config
