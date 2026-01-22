@@ -5,8 +5,9 @@ resources:
   - deployment.yaml
   - service.yaml
 
-commonLabels:
-  app: web-app
+# Safe labels for CI/CD
+labels:
+  environment: production
   managed-by: kustomize
 
 configMapGenerator:
