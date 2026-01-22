@@ -5,7 +5,7 @@ resources:
   - deployment.yaml
   - service.yaml
 
-# Safe labels for CI/CD
+#  valid labels
 labels:
   environment: production
   managed-by: kustomize
