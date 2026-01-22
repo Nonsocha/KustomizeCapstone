@@ -5,7 +5,7 @@ resources:
 patches:
   - target:
       kind: Deployment
-      name: my-app-prod     # Use the final name with suffix
+      name: my-app    # Use the final name with suffix
       namespace: default
     path: replica-count.yaml
 
