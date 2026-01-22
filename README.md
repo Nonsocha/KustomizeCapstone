@@ -388,4 +388,52 @@ Open on Browser:
   ```
       http://localhost:8080
   ```
+### 10. Push Image to a Registry
 
+You need a container registry such as:
+
+- Docker Hub
+
+- Amazon ECR
+
+- GitHub Container Registry
+
+Example (Docker Hub):
+
+```
+docker tag kustomize-web-app:1.0.0 <docker-username>/kustomize-web-app:1.0.0
+docker push <docker-username>/kustomize-web-app:1.0.0
+```
+
+**Deploy Static App to Kubernetes**
+```
+kubectl apply -k overlays/prod
+```
+
+**Expose the App**
+**Port Forwarding**
+```
+kubectl port-forward svc/web-app-service-prod 8080:80
+```
+
+### Challenges Faced & How They Were Resolved (Summary)
+
+- Jenkins UI appeared instead of the web app
+Cause: The browser was accessing localhost on the local machine, while kubectl port-forward was running on a remote EC2 instance.
+    - Resolution: Used SSH tunneling to forward traffic from the local browser to the EC2 instance running kubectl.
+
+- Confusion with Kustomize commands
+     - Cause: Tried to use kustomize apply, which does not exist.
+     - Resolution: Used kubectl apply -k to apply Kustomize manifests.
+
+- Pods stuck in Pending state
+    - Cause: Insufficient CPU/memory on the EKS node for the configured replica count.
+     - Resolution: Reduced replicas in the production overlay.
+
+- OpenAPI / connection refused errors
+  - Cause: Temporary loss of connectivity to the Kubernetes API server or incorrect kubeconfig context.
+  - Resolution: Verified cluster status and kubeconfig context.
+
+- Service accessibility misunderstanding
+     - Cause: Expected a ClusterIP service to be accessible via EC2 public IP.
+    - Resolution: Used port-forwarding (with SSH tunneling) to access the application.
